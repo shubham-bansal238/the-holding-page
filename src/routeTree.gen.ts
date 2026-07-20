@@ -17,6 +17,7 @@ import { Route as InvoiceIndexRouteImport } from './routes/invoice.index'
 import { Route as CustomerGstinRouteImport } from './routes/customer.$gstin'
 import { Route as InvoiceTypeIndexRouteImport } from './routes/invoice.$type.index'
 import { Route as InvoiceTypeCompanyRouteImport } from './routes/invoice.$type.$company'
+import { Route as InvoiceTypeCompanyIndexRouteImport } from './routes/invoice.$type.$company.index'
 
 const SelectModuleRoute = SelectModuleRouteImport.update({
   id: '/select-module',
@@ -58,6 +59,11 @@ const InvoiceTypeCompanyRoute = InvoiceTypeCompanyRouteImport.update({
   path: '/invoice/$type/$company',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InvoiceTypeCompanyIndexRoute = InvoiceTypeCompanyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => InvoiceTypeCompanyRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,8 +72,9 @@ export interface FileRoutesByFullPath {
   '/select-module': typeof SelectModuleRoute
   '/customer/$gstin': typeof CustomerGstinRoute
   '/invoice/': typeof InvoiceIndexRoute
-  '/invoice/$type/$company': typeof InvoiceTypeCompanyRoute
+  '/invoice/$type/$company': typeof InvoiceTypeCompanyRouteWithChildren
   '/invoice/$type/': typeof InvoiceTypeIndexRoute
+  '/invoice/$type/$company/': typeof InvoiceTypeCompanyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -76,8 +83,8 @@ export interface FileRoutesByTo {
   '/select-module': typeof SelectModuleRoute
   '/customer/$gstin': typeof CustomerGstinRoute
   '/invoice': typeof InvoiceIndexRoute
-  '/invoice/$type/$company': typeof InvoiceTypeCompanyRoute
   '/invoice/$type': typeof InvoiceTypeIndexRoute
+  '/invoice/$type/$company': typeof InvoiceTypeCompanyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -87,8 +94,9 @@ export interface FileRoutesById {
   '/select-module': typeof SelectModuleRoute
   '/customer/$gstin': typeof CustomerGstinRoute
   '/invoice/': typeof InvoiceIndexRoute
-  '/invoice/$type/$company': typeof InvoiceTypeCompanyRoute
+  '/invoice/$type/$company': typeof InvoiceTypeCompanyRouteWithChildren
   '/invoice/$type/': typeof InvoiceTypeIndexRoute
+  '/invoice/$type/$company/': typeof InvoiceTypeCompanyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +109,7 @@ export interface FileRouteTypes {
     | '/invoice/'
     | '/invoice/$type/$company'
     | '/invoice/$type/'
+    | '/invoice/$type/$company/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -109,8 +118,8 @@ export interface FileRouteTypes {
     | '/select-module'
     | '/customer/$gstin'
     | '/invoice'
-    | '/invoice/$type/$company'
     | '/invoice/$type'
+    | '/invoice/$type/$company'
   id:
     | '__root__'
     | '/'
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/invoice/'
     | '/invoice/$type/$company'
     | '/invoice/$type/'
+    | '/invoice/$type/$company/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -130,7 +140,7 @@ export interface RootRouteChildren {
   SelectModuleRoute: typeof SelectModuleRoute
   CustomerGstinRoute: typeof CustomerGstinRoute
   InvoiceIndexRoute: typeof InvoiceIndexRoute
-  InvoiceTypeCompanyRoute: typeof InvoiceTypeCompanyRoute
+  InvoiceTypeCompanyRoute: typeof InvoiceTypeCompanyRouteWithChildren
   InvoiceTypeIndexRoute: typeof InvoiceTypeIndexRoute
 }
 
@@ -192,8 +202,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvoiceTypeCompanyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/invoice/$type/$company/': {
+      id: '/invoice/$type/$company/'
+      path: '/'
+      fullPath: '/invoice/$type/$company/'
+      preLoaderRoute: typeof InvoiceTypeCompanyIndexRouteImport
+      parentRoute: typeof InvoiceTypeCompanyRoute
+    }
   }
 }
+
+interface InvoiceTypeCompanyRouteChildren {
+  InvoiceTypeCompanyIndexRoute: typeof InvoiceTypeCompanyIndexRoute
+}
+
+const InvoiceTypeCompanyRouteChildren: InvoiceTypeCompanyRouteChildren = {
+  InvoiceTypeCompanyIndexRoute: InvoiceTypeCompanyIndexRoute,
+}
+
+const InvoiceTypeCompanyRouteWithChildren =
+  InvoiceTypeCompanyRoute._addFileChildren(InvoiceTypeCompanyRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -202,7 +230,7 @@ const rootRouteChildren: RootRouteChildren = {
   SelectModuleRoute: SelectModuleRoute,
   CustomerGstinRoute: CustomerGstinRoute,
   InvoiceIndexRoute: InvoiceIndexRoute,
-  InvoiceTypeCompanyRoute: InvoiceTypeCompanyRoute,
+  InvoiceTypeCompanyRoute: InvoiceTypeCompanyRouteWithChildren,
   InvoiceTypeIndexRoute: InvoiceTypeIndexRoute,
 }
 export const routeTree = rootRouteImport
