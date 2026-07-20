@@ -9,23 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as SelectCompanyRouteImport } from './routes/select-company'
 import { Route as SelectModuleRouteImport } from './routes/select-module'
-import { Route as CustomerGstinRouteImport } from './routes/customer.$gstin'
+import { Route as SelectCompanyRouteImport } from './routes/select-company'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as InvoiceIndexRouteImport } from './routes/invoice.index'
+import { Route as CustomerGstinRouteImport } from './routes/customer.$gstin'
 import { Route as InvoiceTypeIndexRouteImport } from './routes/invoice.$type.index'
 import { Route as InvoiceTypeCompanyRouteImport } from './routes/invoice.$type.$company'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const SelectModuleRoute = SelectModuleRouteImport.update({
+  id: '/select-module',
+  path: '/select-module',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SelectCompanyRoute = SelectCompanyRouteImport.update({
@@ -33,19 +28,24 @@ const SelectCompanyRoute = SelectCompanyRouteImport.update({
   path: '/select-company',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SelectModuleRoute = SelectModuleRouteImport.update({
-  id: '/select-module',
-  path: '/select-module',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CustomerGstinRoute = CustomerGstinRouteImport.update({
-  id: '/customer/$gstin',
-  path: '/customer/$gstin',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InvoiceIndexRoute = InvoiceIndexRouteImport.update({
   id: '/invoice/',
   path: '/invoice/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerGstinRoute = CustomerGstinRouteImport.update({
+  id: '/customer/$gstin',
+  path: '/customer/$gstin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InvoiceTypeIndexRoute = InvoiceTypeIndexRouteImport.update({
@@ -136,18 +136,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/select-module': {
+      id: '/select-module'
+      path: '/select-module'
+      fullPath: '/select-module'
+      preLoaderRoute: typeof SelectModuleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/select-company': {
@@ -157,18 +150,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SelectCompanyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/select-module': {
-      id: '/select-module'
-      path: '/select-module'
-      fullPath: '/select-module'
-      preLoaderRoute: typeof SelectModuleRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/customer/$gstin': {
-      id: '/customer/$gstin'
-      path: '/customer/$gstin'
-      fullPath: '/customer/$gstin'
-      preLoaderRoute: typeof CustomerGstinRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/invoice/': {
@@ -176,6 +169,13 @@ declare module '@tanstack/react-router' {
       path: '/invoice'
       fullPath: '/invoice/'
       preLoaderRoute: typeof InvoiceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customer/$gstin': {
+      id: '/customer/$gstin'
+      path: '/customer/$gstin'
+      fullPath: '/customer/$gstin'
+      preLoaderRoute: typeof CustomerGstinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/invoice/$type/': {
@@ -208,13 +208,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
