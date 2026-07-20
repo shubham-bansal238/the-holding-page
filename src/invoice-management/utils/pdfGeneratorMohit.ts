@@ -890,7 +890,7 @@ export const generatePDF = async (data: InvoiceData) => {
       pagebreak: { mode: ["avoid-all", "css", "legacy"] },
     };
 
-    await html2pdf().set(opt).from(element).save();
+    await html2pdf().set(opt as any).from(element).save();
 
     // Clean up
     document.body.removeChild(element);

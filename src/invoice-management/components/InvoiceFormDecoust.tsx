@@ -137,12 +137,12 @@ IFS Code PUNB0123610`,
       const updatedProducts = [...prev.products];
 
       if (field === "rate" || field === "qty") {
-        updatedProducts[index][field] = value;
+        (updatedProducts[index] as any)[field] = value;
         updatedProducts[index].amount =
           Number(updatedProducts[index].rate) *
           Number(updatedProducts[index].qty);
       } else {
-        updatedProducts[index][field] = value;
+        (updatedProducts[index] as any)[field] = value;
       }
 
       return { ...prev, products: updatedProducts };
