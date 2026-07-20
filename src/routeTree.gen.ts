@@ -18,6 +18,9 @@ import { Route as CustomerGstinRouteImport } from './routes/customer.$gstin'
 import { Route as InvoiceTypeIndexRouteImport } from './routes/invoice.$type.index'
 import { Route as InvoiceTypeCompanyRouteImport } from './routes/invoice.$type.$company'
 import { Route as InvoiceTypeCompanyIndexRouteImport } from './routes/invoice.$type.$company.index'
+import { Route as InvoiceTypeCompanySavedInvoicesRouteImport } from './routes/invoice.$type.$company.saved-invoices'
+import { Route as InvoiceTypeCompanyCreateInvoiceRouteImport } from './routes/invoice.$type.$company.create-invoice'
+import { Route as InvoiceTypeCompanyEditInvoiceIdRouteImport } from './routes/invoice.$type.$company.edit-invoice.$id'
 
 const SelectModuleRoute = SelectModuleRouteImport.update({
   id: '/select-module',
@@ -64,6 +67,24 @@ const InvoiceTypeCompanyIndexRoute = InvoiceTypeCompanyIndexRouteImport.update({
   path: '/',
   getParentRoute: () => InvoiceTypeCompanyRoute,
 } as any)
+const InvoiceTypeCompanySavedInvoicesRoute =
+  InvoiceTypeCompanySavedInvoicesRouteImport.update({
+    id: '/saved-invoices',
+    path: '/saved-invoices',
+    getParentRoute: () => InvoiceTypeCompanyRoute,
+  } as any)
+const InvoiceTypeCompanyCreateInvoiceRoute =
+  InvoiceTypeCompanyCreateInvoiceRouteImport.update({
+    id: '/create-invoice',
+    path: '/create-invoice',
+    getParentRoute: () => InvoiceTypeCompanyRoute,
+  } as any)
+const InvoiceTypeCompanyEditInvoiceIdRoute =
+  InvoiceTypeCompanyEditInvoiceIdRouteImport.update({
+    id: '/edit-invoice/$id',
+    path: '/edit-invoice/$id',
+    getParentRoute: () => InvoiceTypeCompanyRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -74,7 +95,10 @@ export interface FileRoutesByFullPath {
   '/invoice/': typeof InvoiceIndexRoute
   '/invoice/$type/$company': typeof InvoiceTypeCompanyRouteWithChildren
   '/invoice/$type/': typeof InvoiceTypeIndexRoute
+  '/invoice/$type/$company/create-invoice': typeof InvoiceTypeCompanyCreateInvoiceRoute
+  '/invoice/$type/$company/saved-invoices': typeof InvoiceTypeCompanySavedInvoicesRoute
   '/invoice/$type/$company/': typeof InvoiceTypeCompanyIndexRoute
+  '/invoice/$type/$company/edit-invoice/$id': typeof InvoiceTypeCompanyEditInvoiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -84,7 +108,10 @@ export interface FileRoutesByTo {
   '/customer/$gstin': typeof CustomerGstinRoute
   '/invoice': typeof InvoiceIndexRoute
   '/invoice/$type': typeof InvoiceTypeIndexRoute
+  '/invoice/$type/$company/create-invoice': typeof InvoiceTypeCompanyCreateInvoiceRoute
+  '/invoice/$type/$company/saved-invoices': typeof InvoiceTypeCompanySavedInvoicesRoute
   '/invoice/$type/$company': typeof InvoiceTypeCompanyIndexRoute
+  '/invoice/$type/$company/edit-invoice/$id': typeof InvoiceTypeCompanyEditInvoiceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -96,7 +123,10 @@ export interface FileRoutesById {
   '/invoice/': typeof InvoiceIndexRoute
   '/invoice/$type/$company': typeof InvoiceTypeCompanyRouteWithChildren
   '/invoice/$type/': typeof InvoiceTypeIndexRoute
+  '/invoice/$type/$company/create-invoice': typeof InvoiceTypeCompanyCreateInvoiceRoute
+  '/invoice/$type/$company/saved-invoices': typeof InvoiceTypeCompanySavedInvoicesRoute
   '/invoice/$type/$company/': typeof InvoiceTypeCompanyIndexRoute
+  '/invoice/$type/$company/edit-invoice/$id': typeof InvoiceTypeCompanyEditInvoiceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -109,7 +139,10 @@ export interface FileRouteTypes {
     | '/invoice/'
     | '/invoice/$type/$company'
     | '/invoice/$type/'
+    | '/invoice/$type/$company/create-invoice'
+    | '/invoice/$type/$company/saved-invoices'
     | '/invoice/$type/$company/'
+    | '/invoice/$type/$company/edit-invoice/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -119,7 +152,10 @@ export interface FileRouteTypes {
     | '/customer/$gstin'
     | '/invoice'
     | '/invoice/$type'
+    | '/invoice/$type/$company/create-invoice'
+    | '/invoice/$type/$company/saved-invoices'
     | '/invoice/$type/$company'
+    | '/invoice/$type/$company/edit-invoice/$id'
   id:
     | '__root__'
     | '/'
@@ -130,7 +166,10 @@ export interface FileRouteTypes {
     | '/invoice/'
     | '/invoice/$type/$company'
     | '/invoice/$type/'
+    | '/invoice/$type/$company/create-invoice'
+    | '/invoice/$type/$company/saved-invoices'
     | '/invoice/$type/$company/'
+    | '/invoice/$type/$company/edit-invoice/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -209,15 +248,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvoiceTypeCompanyIndexRouteImport
       parentRoute: typeof InvoiceTypeCompanyRoute
     }
+    '/invoice/$type/$company/saved-invoices': {
+      id: '/invoice/$type/$company/saved-invoices'
+      path: '/saved-invoices'
+      fullPath: '/invoice/$type/$company/saved-invoices'
+      preLoaderRoute: typeof InvoiceTypeCompanySavedInvoicesRouteImport
+      parentRoute: typeof InvoiceTypeCompanyRoute
+    }
+    '/invoice/$type/$company/create-invoice': {
+      id: '/invoice/$type/$company/create-invoice'
+      path: '/create-invoice'
+      fullPath: '/invoice/$type/$company/create-invoice'
+      preLoaderRoute: typeof InvoiceTypeCompanyCreateInvoiceRouteImport
+      parentRoute: typeof InvoiceTypeCompanyRoute
+    }
+    '/invoice/$type/$company/edit-invoice/$id': {
+      id: '/invoice/$type/$company/edit-invoice/$id'
+      path: '/edit-invoice/$id'
+      fullPath: '/invoice/$type/$company/edit-invoice/$id'
+      preLoaderRoute: typeof InvoiceTypeCompanyEditInvoiceIdRouteImport
+      parentRoute: typeof InvoiceTypeCompanyRoute
+    }
   }
 }
 
 interface InvoiceTypeCompanyRouteChildren {
+  InvoiceTypeCompanyCreateInvoiceRoute: typeof InvoiceTypeCompanyCreateInvoiceRoute
+  InvoiceTypeCompanySavedInvoicesRoute: typeof InvoiceTypeCompanySavedInvoicesRoute
   InvoiceTypeCompanyIndexRoute: typeof InvoiceTypeCompanyIndexRoute
+  InvoiceTypeCompanyEditInvoiceIdRoute: typeof InvoiceTypeCompanyEditInvoiceIdRoute
 }
 
 const InvoiceTypeCompanyRouteChildren: InvoiceTypeCompanyRouteChildren = {
+  InvoiceTypeCompanyCreateInvoiceRoute: InvoiceTypeCompanyCreateInvoiceRoute,
+  InvoiceTypeCompanySavedInvoicesRoute: InvoiceTypeCompanySavedInvoicesRoute,
   InvoiceTypeCompanyIndexRoute: InvoiceTypeCompanyIndexRoute,
+  InvoiceTypeCompanyEditInvoiceIdRoute: InvoiceTypeCompanyEditInvoiceIdRoute,
 }
 
 const InvoiceTypeCompanyRouteWithChildren =
