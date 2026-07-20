@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Minus, Save, FileDown } from "lucide-react";
 import { toast } from "sonner";
-import { InvoiceData } from "@/utils/firebaseMohit";
+import { InvoiceData } from "@/invoice-management/utils/firebaseMohit";
 
 interface InvoiceFormProps {
   initialData: InvoiceData | null;
