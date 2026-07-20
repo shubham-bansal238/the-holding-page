@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Minus, Save, FileDown } from "lucide-react";
 import { toast } from "sonner";
-import { InvoiceData } from "@/utils/firebaseDecoust";
+import { InvoiceData } from "@/invoice-management/utils/firebaseDecoust";
 
 interface InvoiceFormProps {
   initialData: InvoiceData | null;
@@ -137,12 +137,12 @@ IFS Code PUNB0123610`,
       const updatedProducts = [...prev.products];
 
       if (field === "rate" || field === "qty") {
-        updatedProducts[index][field] = value;
+        (updatedProducts[index] as any)[field] = value;
         updatedProducts[index].amount =
           Number(updatedProducts[index].rate) *
           Number(updatedProducts[index].qty);
       } else {
-        updatedProducts[index][field] = value;
+        (updatedProducts[index] as any)[field] = value;
       }
 
       return { ...prev, products: updatedProducts };

@@ -9,23 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as SelectCompanyRouteImport } from './routes/select-company'
 import { Route as SelectModuleRouteImport } from './routes/select-module'
-import { Route as CustomerGstinRouteImport } from './routes/customer.$gstin'
+import { Route as SelectCompanyRouteImport } from './routes/select-company'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as InvoiceIndexRouteImport } from './routes/invoice.index'
+import { Route as CustomerGstinRouteImport } from './routes/customer.$gstin'
 import { Route as InvoiceTypeIndexRouteImport } from './routes/invoice.$type.index'
 import { Route as InvoiceTypeCompanyRouteImport } from './routes/invoice.$type.$company'
+import { Route as InvoiceTypeCompanyIndexRouteImport } from './routes/invoice.$type.$company.index'
+import { Route as InvoiceTypeCompanySavedInvoicesRouteImport } from './routes/invoice.$type.$company.saved-invoices'
+import { Route as InvoiceTypeCompanyCreateInvoiceRouteImport } from './routes/invoice.$type.$company.create-invoice'
+import { Route as InvoiceTypeCompanyEditInvoiceIdRouteImport } from './routes/invoice.$type.$company.edit-invoice.$id'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const SelectModuleRoute = SelectModuleRouteImport.update({
+  id: '/select-module',
+  path: '/select-module',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SelectCompanyRoute = SelectCompanyRouteImport.update({
@@ -33,19 +32,24 @@ const SelectCompanyRoute = SelectCompanyRouteImport.update({
   path: '/select-company',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SelectModuleRoute = SelectModuleRouteImport.update({
-  id: '/select-module',
-  path: '/select-module',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CustomerGstinRoute = CustomerGstinRouteImport.update({
-  id: '/customer/$gstin',
-  path: '/customer/$gstin',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InvoiceIndexRoute = InvoiceIndexRouteImport.update({
   id: '/invoice/',
   path: '/invoice/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerGstinRoute = CustomerGstinRouteImport.update({
+  id: '/customer/$gstin',
+  path: '/customer/$gstin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InvoiceTypeIndexRoute = InvoiceTypeIndexRouteImport.update({
@@ -58,6 +62,29 @@ const InvoiceTypeCompanyRoute = InvoiceTypeCompanyRouteImport.update({
   path: '/invoice/$type/$company',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InvoiceTypeCompanyIndexRoute = InvoiceTypeCompanyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => InvoiceTypeCompanyRoute,
+} as any)
+const InvoiceTypeCompanySavedInvoicesRoute =
+  InvoiceTypeCompanySavedInvoicesRouteImport.update({
+    id: '/saved-invoices',
+    path: '/saved-invoices',
+    getParentRoute: () => InvoiceTypeCompanyRoute,
+  } as any)
+const InvoiceTypeCompanyCreateInvoiceRoute =
+  InvoiceTypeCompanyCreateInvoiceRouteImport.update({
+    id: '/create-invoice',
+    path: '/create-invoice',
+    getParentRoute: () => InvoiceTypeCompanyRoute,
+  } as any)
+const InvoiceTypeCompanyEditInvoiceIdRoute =
+  InvoiceTypeCompanyEditInvoiceIdRouteImport.update({
+    id: '/edit-invoice/$id',
+    path: '/edit-invoice/$id',
+    getParentRoute: () => InvoiceTypeCompanyRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,8 +93,12 @@ export interface FileRoutesByFullPath {
   '/select-module': typeof SelectModuleRoute
   '/customer/$gstin': typeof CustomerGstinRoute
   '/invoice/': typeof InvoiceIndexRoute
-  '/invoice/$type/$company': typeof InvoiceTypeCompanyRoute
+  '/invoice/$type/$company': typeof InvoiceTypeCompanyRouteWithChildren
   '/invoice/$type/': typeof InvoiceTypeIndexRoute
+  '/invoice/$type/$company/create-invoice': typeof InvoiceTypeCompanyCreateInvoiceRoute
+  '/invoice/$type/$company/saved-invoices': typeof InvoiceTypeCompanySavedInvoicesRoute
+  '/invoice/$type/$company/': typeof InvoiceTypeCompanyIndexRoute
+  '/invoice/$type/$company/edit-invoice/$id': typeof InvoiceTypeCompanyEditInvoiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -76,8 +107,11 @@ export interface FileRoutesByTo {
   '/select-module': typeof SelectModuleRoute
   '/customer/$gstin': typeof CustomerGstinRoute
   '/invoice': typeof InvoiceIndexRoute
-  '/invoice/$type/$company': typeof InvoiceTypeCompanyRoute
   '/invoice/$type': typeof InvoiceTypeIndexRoute
+  '/invoice/$type/$company/create-invoice': typeof InvoiceTypeCompanyCreateInvoiceRoute
+  '/invoice/$type/$company/saved-invoices': typeof InvoiceTypeCompanySavedInvoicesRoute
+  '/invoice/$type/$company': typeof InvoiceTypeCompanyIndexRoute
+  '/invoice/$type/$company/edit-invoice/$id': typeof InvoiceTypeCompanyEditInvoiceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -87,8 +121,12 @@ export interface FileRoutesById {
   '/select-module': typeof SelectModuleRoute
   '/customer/$gstin': typeof CustomerGstinRoute
   '/invoice/': typeof InvoiceIndexRoute
-  '/invoice/$type/$company': typeof InvoiceTypeCompanyRoute
+  '/invoice/$type/$company': typeof InvoiceTypeCompanyRouteWithChildren
   '/invoice/$type/': typeof InvoiceTypeIndexRoute
+  '/invoice/$type/$company/create-invoice': typeof InvoiceTypeCompanyCreateInvoiceRoute
+  '/invoice/$type/$company/saved-invoices': typeof InvoiceTypeCompanySavedInvoicesRoute
+  '/invoice/$type/$company/': typeof InvoiceTypeCompanyIndexRoute
+  '/invoice/$type/$company/edit-invoice/$id': typeof InvoiceTypeCompanyEditInvoiceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +139,10 @@ export interface FileRouteTypes {
     | '/invoice/'
     | '/invoice/$type/$company'
     | '/invoice/$type/'
+    | '/invoice/$type/$company/create-invoice'
+    | '/invoice/$type/$company/saved-invoices'
+    | '/invoice/$type/$company/'
+    | '/invoice/$type/$company/edit-invoice/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -109,8 +151,11 @@ export interface FileRouteTypes {
     | '/select-module'
     | '/customer/$gstin'
     | '/invoice'
-    | '/invoice/$type/$company'
     | '/invoice/$type'
+    | '/invoice/$type/$company/create-invoice'
+    | '/invoice/$type/$company/saved-invoices'
+    | '/invoice/$type/$company'
+    | '/invoice/$type/$company/edit-invoice/$id'
   id:
     | '__root__'
     | '/'
@@ -121,6 +166,10 @@ export interface FileRouteTypes {
     | '/invoice/'
     | '/invoice/$type/$company'
     | '/invoice/$type/'
+    | '/invoice/$type/$company/create-invoice'
+    | '/invoice/$type/$company/saved-invoices'
+    | '/invoice/$type/$company/'
+    | '/invoice/$type/$company/edit-invoice/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -130,24 +179,17 @@ export interface RootRouteChildren {
   SelectModuleRoute: typeof SelectModuleRoute
   CustomerGstinRoute: typeof CustomerGstinRoute
   InvoiceIndexRoute: typeof InvoiceIndexRoute
-  InvoiceTypeCompanyRoute: typeof InvoiceTypeCompanyRoute
+  InvoiceTypeCompanyRoute: typeof InvoiceTypeCompanyRouteWithChildren
   InvoiceTypeIndexRoute: typeof InvoiceTypeIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/select-module': {
+      id: '/select-module'
+      path: '/select-module'
+      fullPath: '/select-module'
+      preLoaderRoute: typeof SelectModuleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/select-company': {
@@ -157,18 +199,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SelectCompanyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/select-module': {
-      id: '/select-module'
-      path: '/select-module'
-      fullPath: '/select-module'
-      preLoaderRoute: typeof SelectModuleRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/customer/$gstin': {
-      id: '/customer/$gstin'
-      path: '/customer/$gstin'
-      fullPath: '/customer/$gstin'
-      preLoaderRoute: typeof CustomerGstinRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/invoice/': {
@@ -176,6 +218,13 @@ declare module '@tanstack/react-router' {
       path: '/invoice'
       fullPath: '/invoice/'
       preLoaderRoute: typeof InvoiceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customer/$gstin': {
+      id: '/customer/$gstin'
+      path: '/customer/$gstin'
+      fullPath: '/customer/$gstin'
+      preLoaderRoute: typeof CustomerGstinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/invoice/$type/': {
@@ -192,8 +241,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvoiceTypeCompanyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/invoice/$type/$company/': {
+      id: '/invoice/$type/$company/'
+      path: '/'
+      fullPath: '/invoice/$type/$company/'
+      preLoaderRoute: typeof InvoiceTypeCompanyIndexRouteImport
+      parentRoute: typeof InvoiceTypeCompanyRoute
+    }
+    '/invoice/$type/$company/saved-invoices': {
+      id: '/invoice/$type/$company/saved-invoices'
+      path: '/saved-invoices'
+      fullPath: '/invoice/$type/$company/saved-invoices'
+      preLoaderRoute: typeof InvoiceTypeCompanySavedInvoicesRouteImport
+      parentRoute: typeof InvoiceTypeCompanyRoute
+    }
+    '/invoice/$type/$company/create-invoice': {
+      id: '/invoice/$type/$company/create-invoice'
+      path: '/create-invoice'
+      fullPath: '/invoice/$type/$company/create-invoice'
+      preLoaderRoute: typeof InvoiceTypeCompanyCreateInvoiceRouteImport
+      parentRoute: typeof InvoiceTypeCompanyRoute
+    }
+    '/invoice/$type/$company/edit-invoice/$id': {
+      id: '/invoice/$type/$company/edit-invoice/$id'
+      path: '/edit-invoice/$id'
+      fullPath: '/invoice/$type/$company/edit-invoice/$id'
+      preLoaderRoute: typeof InvoiceTypeCompanyEditInvoiceIdRouteImport
+      parentRoute: typeof InvoiceTypeCompanyRoute
+    }
   }
 }
+
+interface InvoiceTypeCompanyRouteChildren {
+  InvoiceTypeCompanyCreateInvoiceRoute: typeof InvoiceTypeCompanyCreateInvoiceRoute
+  InvoiceTypeCompanySavedInvoicesRoute: typeof InvoiceTypeCompanySavedInvoicesRoute
+  InvoiceTypeCompanyIndexRoute: typeof InvoiceTypeCompanyIndexRoute
+  InvoiceTypeCompanyEditInvoiceIdRoute: typeof InvoiceTypeCompanyEditInvoiceIdRoute
+}
+
+const InvoiceTypeCompanyRouteChildren: InvoiceTypeCompanyRouteChildren = {
+  InvoiceTypeCompanyCreateInvoiceRoute: InvoiceTypeCompanyCreateInvoiceRoute,
+  InvoiceTypeCompanySavedInvoicesRoute: InvoiceTypeCompanySavedInvoicesRoute,
+  InvoiceTypeCompanyIndexRoute: InvoiceTypeCompanyIndexRoute,
+  InvoiceTypeCompanyEditInvoiceIdRoute: InvoiceTypeCompanyEditInvoiceIdRoute,
+}
+
+const InvoiceTypeCompanyRouteWithChildren =
+  InvoiceTypeCompanyRoute._addFileChildren(InvoiceTypeCompanyRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -202,19 +296,9 @@ const rootRouteChildren: RootRouteChildren = {
   SelectModuleRoute: SelectModuleRoute,
   CustomerGstinRoute: CustomerGstinRoute,
   InvoiceIndexRoute: InvoiceIndexRoute,
-  InvoiceTypeCompanyRoute: InvoiceTypeCompanyRoute,
+  InvoiceTypeCompanyRoute: InvoiceTypeCompanyRouteWithChildren,
   InvoiceTypeIndexRoute: InvoiceTypeIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
