@@ -1,5 +1,5 @@
 // Firebase configuration and initialization
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApp, getApps } from 'firebase/app';
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 // Firebase config - You need to replace these with your actual Firebase credentials
