@@ -128,7 +128,7 @@ export function CreateOrEditInvoice({
     // the standalone app hangs here. Neutralise oklch() globally for the
     // duration of the export by overriding every CSS custom property that
     // resolves to an oklch() value with a safe sRGB fallback, then restore.
-    console.error("[pdf] neutralising oklch before html2pdf");
+    // Neutralise Tailwind v4 oklch() colors before html2canvas cloning.
     const restore = await neutraliseOklchColors();
     try {
       await pdf.generatePDF(data);
