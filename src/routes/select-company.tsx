@@ -45,6 +45,12 @@ function SelectCompanyPage() {
     navigate({ to: "/login" });
   }
 
+  function switchModule() {
+    if (!session) return;
+    writeSession({ code: session.code, company: null, module: null });
+    navigate({ to: "/select-module" });
+  }
+
   if (!session) return null;
 
   return (
@@ -60,12 +66,20 @@ function SelectCompanyPage() {
               Choose which company&apos;s data to work with.
             </p>
           </div>
-          <button
-            onClick={logout}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-          >
-            Logout
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={switchModule}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+            >
+              Switch Module
+            </button>
+            <button
+              onClick={logout}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

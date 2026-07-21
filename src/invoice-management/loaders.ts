@@ -78,13 +78,23 @@ function pdfKey(type: InvoiceType, company: CompanyId) {
   return `./utils/pdfGenerator${NAME_BY_COMPANY[company]}${SUFFIX_BY_TYPE[type]}.ts`;
 }
 
+const lazyFormCache = new Map<
+  string,
+  React.LazyExoticComponent<React.ComponentType<InvoiceFormProps>>
+>();
+
 export function getInvoiceFormComponent(
   type: InvoiceType,
   company: CompanyId,
 ): React.LazyExoticComponent<React.ComponentType<InvoiceFormProps>> | null {
-  const loader = invoiceFormModules[invoiceFormKey(type, company)];
+  const key = invoiceFormKey(type, company);
+  const loader = invoiceFormModules[key];
   if (!loader) return null;
-  return React.lazy(loader);
+  const cached = lazyFormCache.get(key);
+  if (cached) return cached;
+  const lazy = React.lazy(loader);
+  lazyFormCache.set(key, lazy);
+  return lazy;
 }
 
 export function hasInvoiceFormFor(type: InvoiceType, company: CompanyId) {
