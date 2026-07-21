@@ -13,7 +13,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const APP_NAME = 'im-asg';
+const app = getApps().find(a => a.name === APP_NAME) ?? initializeApp(firebaseConfig, APP_NAME);
 export const db = getFirestore(app);
 
 // Invoice interface
