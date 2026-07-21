@@ -45,6 +45,12 @@ function SelectCompanyPage() {
     navigate({ to: "/login" });
   }
 
+  function switchModule() {
+    if (!session) return;
+    writeSession({ code: session.code, company: null, module: null });
+    navigate({ to: "/select-module" });
+  }
+
   if (!session) return null;
 
   return (
