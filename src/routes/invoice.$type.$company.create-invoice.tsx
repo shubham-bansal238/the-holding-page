@@ -13,6 +13,7 @@ import {
   type PdfModule,
   type InvoiceType,
 } from "@/invoice-management/loaders";
+import { neutraliseOklchColors } from "@/invoice-management/lib/oklch-shim";
 
 export const Route = createFileRoute("/invoice/$type/$company/create-invoice")({
   component: CreateInvoicePage,
@@ -122,14 +123,24 @@ export function CreateOrEditInvoice({
 
   const handleGeneratePDF = async (data: AnyInvoiceData) => {
     if (!pdf) throw new Error("Module not ready");
+    // html2canvas (used by html2pdf.js) cannot parse Tailwind v4's oklch()
+    // colors and throws, which is why the same invoice HTML that works in
+    // the standalone app hangs here. Neutralise oklch() globally for the
+    // duration of the export by overriding every CSS custom property that
+    // resolves to an oklch() value with a safe sRGB fallback, then restore.
+    console.error("[pdf] neutralising oklch before html2pdf");
+    const restore = await neutraliseOklchColors();
     try {
       await pdf.generatePDF(data);
       toast.success("PDF generated and downloaded successfully!");
     } catch (error) {
       toast.error("Failed to generate PDF");
       console.error("PDF generation error:", error);
+    } finally {
+      await restore();
     }
   };
+
 
   if (moduleError) {
     return (
