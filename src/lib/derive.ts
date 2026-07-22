@@ -61,6 +61,7 @@ export function summarizeCustomer(
   const payments = c.payments ?? {};
   let outstanding = 0;
   let totalBusiness = 0;
+  let totalBusinessPreGst = 0;
   let totalProfit = 0;
   let pending = 0;
   let latestPaymentDate = "";
