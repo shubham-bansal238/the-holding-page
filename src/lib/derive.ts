@@ -116,6 +116,7 @@ export interface GlobalSummary {
   totalOutstanding: number;
   amountCollected: number;
   totalSales: number;
+  totalSalesPreGst: number;
   totalProfit: number;
   totalInvoices: number;
   pendingInvoices: number;
@@ -129,6 +130,7 @@ export function buildGlobalSummary(
   let totalOutstanding = 0;
   let amountCollected = 0;
   let totalSales = 0;
+  let totalSalesPreGst = 0;
   let totalProfit = 0;
   let totalInvoices = 0;
   let pending = 0;
@@ -140,6 +142,7 @@ export function buildGlobalSummary(
       if (!invoiceInPeriod(inv.invoiceDate, period)) continue;
       totalInvoices++;
       totalSales += inv.invoiceAmount || 0;
+      totalSalesPreGst += preGstAmount(inv.invoiceAmount || 0);
       const pay = payments[inv.invoiceNumber];
       const out = invoiceOutstanding(inv, pay);
       totalOutstanding += out;
@@ -156,6 +159,7 @@ export function buildGlobalSummary(
     totalOutstanding,
     amountCollected,
     totalSales,
+    totalSalesPreGst: Math.round(totalSalesPreGst * 100) / 100,
     totalProfit: Math.round(totalProfit * 100) / 100,
     totalInvoices,
     pendingInvoices: pending,
