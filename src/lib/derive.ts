@@ -69,6 +69,7 @@ export function summarizeCustomer(
 
   for (const inv of invs) {
     totalBusiness += inv.invoiceAmount || 0;
+    totalBusinessPreGst += preGstAmount(inv.invoiceAmount || 0);
     const pay = payments[inv.invoiceNumber];
     const out = invoiceOutstanding(inv, pay);
     outstanding += out;
