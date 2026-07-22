@@ -151,7 +151,7 @@ IFS Code PUNB0123610`,
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent, action: 'save' | 'saveAsNew' | 'generatePdf' = 'save') => {
+  const handleSubmit = async (e: React.FormEvent, action: 'save' | 'saveAsNew' | 'generatePdf' | 'generateSinglePdf' = 'save') => {
     e.preventDefault();
 
     try {
