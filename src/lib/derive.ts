@@ -102,6 +102,7 @@ export function summarizeCustomer(
     name: c.details.name || "Unnamed customer",
     outstanding,
     totalBusiness,
+    totalBusinessPreGst: Math.round(totalBusinessPreGst * 100) / 100,
     totalProfit: Math.round(totalProfit * 100) / 100,
     pendingInvoices: pending,
     invoiceCount: invs.length,
