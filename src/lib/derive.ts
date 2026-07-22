@@ -42,6 +42,7 @@ export interface CustomerSummary {
   name: string;
   outstanding: number;
   totalBusiness: number;
+  totalBusinessPreGst: number;
   totalProfit: number;
   pendingInvoices: number;
   invoiceCount: number;
@@ -49,6 +50,7 @@ export interface CustomerSummary {
   lastPaymentDate: string;
   status: "paid" | "overdue" | "unpaid" | "none";
 }
+
 
 export function summarizeCustomer(
   c: CustomerDoc,
