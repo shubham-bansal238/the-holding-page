@@ -13,6 +13,7 @@ interface InvoiceFormProps {
   onSave: (data: InvoiceData) => Promise<void>;
   onSaveAsNew: (data: InvoiceData) => Promise<void>;
   onGeneratePDF: (data: InvoiceData) => Promise<void>;
+  onGenerateSinglePDF?: (data: InvoiceData) => Promise<void>;
 }
 
 const InvoiceForm = ({
@@ -20,6 +21,7 @@ const InvoiceForm = ({
   onSave,
   onSaveAsNew,
   onGeneratePDF,
+  onGenerateSinglePDF,
 }: InvoiceFormProps) => {
   const [formData, setFormData] = useState<InvoiceData>({
     invoiceNumber: "MI/2026-27/",
@@ -149,7 +151,7 @@ IFS Code PUNB0123610`,
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent, action: 'save' | 'saveAsNew' | 'generatePdf' = 'save') => {
+  const handleSubmit = async (e: React.FormEvent, action: 'save' | 'saveAsNew' | 'generatePdf' | 'generateSinglePdf' = 'save') => {
     e.preventDefault();
 
     try {
@@ -178,6 +180,9 @@ IFS Code PUNB0123610`,
           break;
         case 'generatePdf':
           await onGeneratePDF(invoiceData);
+          break;
+        case 'generateSinglePdf':
+          if (onGenerateSinglePDF) await onGenerateSinglePDF(invoiceData);
           break;
       }
     } catch (error) {
@@ -974,6 +979,17 @@ IFS Code PUNB0123610`,
             <FileDown className="w-4 h-4" />
             Generate PDF
           </Button>
+          {onGenerateSinglePDF && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={(e) => handleSubmit(e, 'generateSinglePdf')}
+              className="flex items-center gap-2"
+            >
+              <FileDown className="w-4 h-4" />
+              Generate Single-Page PDF
+            </Button>
+          )}
         </div>
       </form>
     </div>

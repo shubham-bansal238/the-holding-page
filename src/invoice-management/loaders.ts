@@ -41,6 +41,7 @@ export interface InvoiceFormProps {
   onSave: (data: AnyInvoiceData) => Promise<void>;
   onSaveAsNew: (data: AnyInvoiceData) => Promise<void>;
   onGeneratePDF: (data: AnyInvoiceData) => Promise<void>;
+  onGenerateSinglePDF?: (data: AnyInvoiceData) => Promise<void>;
 }
 
 export interface FirebaseModule {
@@ -52,6 +53,7 @@ export interface FirebaseModule {
 
 export interface PdfModule {
   generatePDF: (data: AnyInvoiceData) => Promise<void>;
+  generateSinglePDF?: (data: AnyInvoiceData) => Promise<void>;
 }
 
 type Loader<T = unknown> = () => Promise<T>;

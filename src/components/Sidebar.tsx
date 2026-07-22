@@ -94,6 +94,7 @@ export function Sidebar({
           <dl className="mt-4 space-y-3">
             <Row label="Amount Collected" value={formatCurrency(summary.amountCollected)} />
             <Row label="Total Sales" value={formatCurrency(summary.totalSales)} />
+            <Row label="Business Done (Pre-GST)" value={formatCurrency(summary.totalSalesPreGst)} />
             <Row
               label="Total Profit"
               value={formatCurrency(summary.totalProfit)}

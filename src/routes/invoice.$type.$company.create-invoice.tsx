@@ -123,18 +123,26 @@ export function CreateOrEditInvoice({
 
   const handleGeneratePDF = async (data: AnyInvoiceData) => {
     if (!pdf) throw new Error("Module not ready");
-    // html2canvas (used by html2pdf.js) cannot parse Tailwind v4's oklch()
-    // colors and throws, which is why the same invoice HTML that works in
-    // the standalone app hangs here. Neutralise oklch() globally for the
-    // duration of the export by overriding every CSS custom property that
-    // resolves to an oklch() value with a safe sRGB fallback, then restore.
-    // Neutralise Tailwind v4 oklch() colors before html2canvas cloning.
     const restore = await neutraliseOklchColors();
     try {
       await pdf.generatePDF(data);
       toast.success("PDF generated and downloaded successfully!");
     } catch (error) {
       toast.error("Failed to generate PDF");
+      console.error("PDF generation error:", error);
+    } finally {
+      await restore();
+    }
+  };
+
+  const handleGenerateSinglePDF = async (data: AnyInvoiceData) => {
+    if (!pdf?.generateSinglePDF) throw new Error("Single PDF not supported");
+    const restore = await neutraliseOklchColors();
+    try {
+      await pdf.generateSinglePDF(data);
+      toast.success("Single-page PDF downloaded!");
+    } catch (error) {
+      toast.error("Failed to generate single PDF");
       console.error("PDF generation error:", error);
     } finally {
       await restore();
@@ -197,6 +205,7 @@ export function CreateOrEditInvoice({
             onSave={handleSave}
             onSaveAsNew={handleSaveAsNew}
             onGeneratePDF={handleGeneratePDF}
+            onGenerateSinglePDF={type === "invoices" ? handleGenerateSinglePDF : undefined}
           />
         </Suspense>
       ) : (

@@ -915,3 +915,39 @@ export const generatePDF = async (data: InvoiceData) => {
     throw new Error("Failed to generate PDF");
   }
 };
+
+export const generateSinglePDF = async (data: InvoiceData) => {
+  try {
+    const singleHTML = generateInvoiceHTML(data, "Original For Buyer");
+    const element = document.createElement("div");
+    element.innerHTML = singleHTML;
+    document.body.appendChild(element);
+
+    const opt = {
+      margin: [0.3, 0.3, 0.3, 0.3],
+      filename: `invoice-${
+        data.invoiceNumber?.replace(/\//g, "-") || "invoice"
+      }-single.pdf`,
+      image: { type: "jpeg", quality: 0.82 },
+      html2canvas: {
+        scale: 1.5,
+        useCORS: true,
+        letterRendering: true,
+        allowTaint: false,
+      },
+      jsPDF: {
+        unit: "in",
+        format: "a4",
+        orientation: "portrait",
+        compress: true,
+      },
+      pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+    };
+
+    await html2pdf().set(opt as any).from(element).save();
+    document.body.removeChild(element);
+  } catch (error) {
+    console.error("Error generating single PDF:", error);
+    throw new Error("Failed to generate single PDF");
+  }
+};
