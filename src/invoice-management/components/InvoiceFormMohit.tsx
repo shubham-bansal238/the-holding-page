@@ -979,6 +979,17 @@ IFS Code PUNB0123610`,
             <FileDown className="w-4 h-4" />
             Generate PDF
           </Button>
+          {onGenerateSinglePDF && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={(e) => handleSubmit(e, 'generateSinglePdf')}
+              className="flex items-center gap-2"
+            >
+              <FileDown className="w-4 h-4" />
+              Generate Single-Page PDF
+            </Button>
+          )}
         </div>
       </form>
     </div>
