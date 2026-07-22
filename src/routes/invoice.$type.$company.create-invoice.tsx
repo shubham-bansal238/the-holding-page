@@ -205,6 +205,7 @@ export function CreateOrEditInvoice({
             onSave={handleSave}
             onSaveAsNew={handleSaveAsNew}
             onGeneratePDF={handleGeneratePDF}
+            onGenerateSinglePDF={type === "invoices" ? handleGenerateSinglePDF : undefined}
           />
         </Suspense>
       ) : (
