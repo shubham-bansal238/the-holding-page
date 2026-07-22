@@ -13,6 +13,7 @@ interface InvoiceFormProps {
   onSave: (data: InvoiceData) => Promise<void>;
   onSaveAsNew: (data: InvoiceData) => Promise<void>;
   onGeneratePDF: (data: InvoiceData) => Promise<void>;
+  onGenerateSinglePDF?: (data: InvoiceData) => Promise<void>;
 }
 
 const InvoiceForm = ({
@@ -20,6 +21,7 @@ const InvoiceForm = ({
   onSave,
   onSaveAsNew,
   onGeneratePDF,
+  onGenerateSinglePDF,
 }: InvoiceFormProps) => {
   const [formData, setFormData] = useState<InvoiceData>({
     invoiceNumber: "MI/2026-27/",
