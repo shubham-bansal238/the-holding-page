@@ -180,6 +180,7 @@ export interface CustomerDetail {
   totalOutstanding: number;
   totalReceived: number;
   totalBusiness: number;
+  totalBusinessPreGst: number;
   totalProfit: number;
   lastPaymentDate: string;
 }
@@ -188,6 +189,7 @@ export function computeCustomerDetail(c: CustomerDoc): CustomerDetail {
   let totalOutstanding = 0;
   let totalReceived = 0;
   let totalBusiness = 0;
+  let totalBusinessPreGst = 0;
   let totalProfit = 0;
   let lastPaymentDate = "";
   const payments = c.payments ?? {};
@@ -195,18 +197,26 @@ export function computeCustomerDetail(c: CustomerDoc): CustomerDetail {
   for (const inv of Object.values(c.invoices ?? {})) {
     if (!isAfterCutoff(inv.invoiceDate)) continue;
     totalBusiness += inv.invoiceAmount || 0;
+    const pre = preGstAmount(inv.invoiceAmount || 0);
+    totalBusinessPreGst += pre;
     const pay = payments[inv.invoiceNumber];
     totalOutstanding += invoiceOutstanding(inv, pay);
     totalReceived += invoiceReceived(inv, pay);
     if (pay?.rmCost !== null && pay?.rmCost !== undefined) {
-      const pre = preGstAmount(inv.invoiceAmount);
       totalProfit += pre - pay.rmCost;
     }
     for (const d of pay?.paymentDates ?? []) {
       if (d && d > lastPaymentDate) lastPaymentDate = d;
     }
   }
-  return { totalOutstanding, totalReceived, totalBusiness, totalProfit, lastPaymentDate };
+  return {
+    totalOutstanding,
+    totalReceived,
+    totalBusiness,
+    totalBusinessPreGst: Math.round(totalBusinessPreGst * 100) / 100,
+    totalProfit,
+    lastPaymentDate,
+  };
 }
 
 export function preGstAmount(invoiceAmount: number, gstRate = 18): number {
