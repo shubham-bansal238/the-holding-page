@@ -181,6 +181,9 @@ IFS Code PUNB0123610`,
         case 'generatePdf':
           await onGeneratePDF(invoiceData);
           break;
+        case 'generateSinglePdf':
+          if (onGenerateSinglePDF) await onGenerateSinglePDF(invoiceData);
+          break;
       }
     } catch (error) {
       toast.error("An error occurred while processing the invoice");
