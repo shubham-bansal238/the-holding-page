@@ -178,7 +178,7 @@ function CustomerPage() {
                   </button>
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
+                <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-6">
                   <StatCard
                     label="Total Outstanding"
                     value={formatCurrency(detail?.totalOutstanding ?? 0)}
@@ -191,6 +191,10 @@ function CustomerPage() {
                   <StatCard
                     label="Total Business"
                     value={formatCurrency(detail?.totalBusiness ?? 0)}
+                  />
+                  <StatCard
+                    label="Business (Pre-GST)"
+                    value={formatCurrency(detail?.totalBusinessPreGst ?? 0)}
                   />
                   <StatCard
                     label="Total Profit"
