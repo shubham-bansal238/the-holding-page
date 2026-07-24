@@ -1,5 +1,5 @@
 // Firebase configuration and initialization
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 // Firebase config - You need to replace these with your actual Firebase credentials
@@ -13,7 +13,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const APP_NAME = 'im-decoust-po';
+const app = getApps().find((a) => a.name === APP_NAME) ?? initializeApp(firebaseConfig, APP_NAME);
 export const db = getFirestore(app);
 
 // Invoice interface
