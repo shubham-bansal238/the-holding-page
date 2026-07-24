@@ -8,6 +8,8 @@ import { Plus, Minus, Save, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { InvoiceData } from "@/invoice-management/utils/firebaseMohitPO";
 
+type ProductField = keyof InvoiceData["products"][number];
+
 interface InvoiceFormProps {
   initialData: InvoiceData | null;
   onSave: (data: InvoiceData) => Promise<void>;
@@ -127,17 +129,19 @@ const InvoiceForm = ({
     });
   };
 
-  const updateProduct = (index: number, field: string, value: any) => {
+  const updateProduct = (index: number, field: ProductField, value: string | number) => {
     setFormData((prev) => {
       const updatedProducts = [...prev.products];
+      const product = updatedProducts[index];
+      if (!product) return prev;
 
       if (field === "rate" || field === "qty") {
-        updatedProducts[index][field] = value;
-        updatedProducts[index].amount =
-          Number(updatedProducts[index].rate) *
-          Number(updatedProducts[index].qty);
+        const numericValue = Number(value);
+        const rate = field === "rate" ? numericValue : Number(product.rate);
+        const qty = field === "qty" ? numericValue : Number(product.qty);
+        updatedProducts[index] = { ...product, [field]: numericValue, amount: rate * qty };
       } else {
-        updatedProducts[index][field] = value;
+        updatedProducts[index] = { ...product, [field]: value };
       }
 
       return { ...prev, products: updatedProducts };
