@@ -759,7 +759,7 @@ export const generatePDF = async (data: InvoiceData) => {
     document.body.appendChild(element);
 
     const opt = {
-      margin: [0.3, 0.3, 0.3, 0.3],
+      margin: [0.3, 0.3, 0.3, 0.3] as [number, number, number, number],
       filename: `PO-${
         data.invoiceNumber?.replace(/\//g, "-") || "DTS-PO-2026-27-001"
       }.pdf`,

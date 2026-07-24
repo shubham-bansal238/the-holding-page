@@ -830,7 +830,7 @@ export const generatePDF = async (data: InvoiceData) => {
     document.body.appendChild(element);
 
     const opt = {
-      margin: [0.3, 0.3, 0.3, 0.3],
+      margin: [0.3, 0.3, 0.3, 0.3] as [number, number, number, number],
       filename: `PI-${
         data.invoiceNumber?.replace(/\//g, "-") || "MI-2026-27-024"
       }.pdf`,
