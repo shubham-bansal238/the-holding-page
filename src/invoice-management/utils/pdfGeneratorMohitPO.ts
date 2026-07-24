@@ -766,7 +766,7 @@ export const generatePDF = async (data: InvoiceData) => {
       filename: `PO-${
         data.invoiceNumber?.replace(/\//g, "-") || "DTS-PO-2026-27-001"
       }.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
+      image: { type: "jpeg" as const, quality: 0.98 },
       html2canvas: {
         scale: 2,
         useCORS: true,
@@ -776,7 +776,7 @@ export const generatePDF = async (data: InvoiceData) => {
       jsPDF: {
         unit: "in",
         format: "a4",
-        orientation: "portrait",
+        orientation: "portrait" as const,
       },
       pagebreak: { mode: ["avoid-all", "css", "legacy"] },
     };
