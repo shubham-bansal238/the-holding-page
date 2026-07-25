@@ -85,7 +85,7 @@ export function InvoiceRow({
     setDraft(normalizePayment(invoice.invoiceNumber, payment));
   }, [payment, invoice.invoiceNumber]);
 
-  const preGst = useMemo(() => preGstAmount(invoice.invoiceAmount), [invoice.invoiceAmount]);
+  const preGst = useMemo(() => preGstAmount(invoice.invoiceAmount, invoice.gstRate), [invoice.invoiceAmount, invoice.gstRate]);
   const profit = useMemo(() => {
     if (draft.rmCost === null || draft.rmCost === undefined) return null;
     return Math.round((preGst - draft.rmCost) * 100) / 100;
