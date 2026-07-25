@@ -41,10 +41,12 @@ export interface CustomerSummary {
   gstin: string;
   name: string;
   outstanding: number;
+  amountCollected: number;
   totalBusiness: number;
   totalBusinessPreGst: number;
   totalProfit: number;
   pendingInvoices: number;
+  paidInvoices: number;
   invoiceCount: number;
   lastInvoiceDate: string;
   lastPaymentDate: string;
@@ -60,22 +62,28 @@ export function summarizeCustomer(
   const invs = allInvs.filter((i) => invoiceInPeriod(i.invoiceDate, period));
   const payments = c.payments ?? {};
   let outstanding = 0;
+  let amountCollected = 0;
   let totalBusiness = 0;
   let totalBusinessPreGst = 0;
   let totalProfit = 0;
   let pending = 0;
+  let paid = 0;
   let latestPaymentDate = "";
   let overdueFlag = false;
 
   for (const inv of invs) {
-    totalBusiness += inv.invoiceAmount || 0;
-    totalBusinessPreGst += preGstAmount(inv.invoiceAmount || 0);
+    const amt = inv.invoiceAmount || 0;
+    const pre = preGstAmount(amt, inv.gstRate);
+    totalBusiness += amt;
+    totalBusinessPreGst += pre;
     const pay = payments[inv.invoiceNumber];
     const out = invoiceOutstanding(inv, pay);
     outstanding += out;
+    amountCollected += amt - out;
     if (out > 0) pending++;
+    else paid++;
     if (pay?.rmCost !== null && pay?.rmCost !== undefined) {
-      totalProfit += preGstAmount(inv.invoiceAmount) - pay.rmCost;
+      totalProfit += pre - pay.rmCost;
     }
     for (const e of pay?.entries ?? []) {
       if (e.paymentDate && e.paymentDate > latestPaymentDate) latestPaymentDate = e.paymentDate;
@@ -101,10 +109,12 @@ export function summarizeCustomer(
     gstin: c.details.gstin,
     name: c.details.name || "Unnamed customer",
     outstanding,
+    amountCollected: Math.round(amountCollected * 100) / 100,
     totalBusiness,
     totalBusinessPreGst: Math.round(totalBusinessPreGst * 100) / 100,
     totalProfit: Math.round(totalProfit * 100) / 100,
     pendingInvoices: pending,
+    paidInvoices: paid,
     invoiceCount: invs.length,
     lastInvoiceDate,
     lastPaymentDate: latestPaymentDate,
@@ -127,6 +137,7 @@ export function buildGlobalSummary(
   customers: Record<string, CustomerDoc>,
   period: DashboardPeriod,
 ): GlobalSummary {
+  const summaries = Object.values(customers).map((c) => summarizeCustomer(c, period));
   let totalOutstanding = 0;
   let amountCollected = 0;
   let totalSales = 0;
@@ -136,29 +147,21 @@ export function buildGlobalSummary(
   let pending = 0;
   let paid = 0;
 
-  for (const c of Object.values(customers)) {
-    const payments = c.payments ?? {};
-    for (const inv of Object.values(c.invoices ?? {})) {
-      if (!invoiceInPeriod(inv.invoiceDate, period)) continue;
-      totalInvoices++;
-      totalSales += inv.invoiceAmount || 0;
-      totalSalesPreGst += preGstAmount(inv.invoiceAmount || 0);
-      const pay = payments[inv.invoiceNumber];
-      const out = invoiceOutstanding(inv, pay);
-      totalOutstanding += out;
-      amountCollected += (inv.invoiceAmount || 0) - out;
-      if (pay?.rmCost !== null && pay?.rmCost !== undefined) {
-        totalProfit += preGstAmount(inv.invoiceAmount) - pay.rmCost;
-      }
-      if (out === 0) paid++;
-      else pending++;
-    }
+  for (const s of summaries) {
+    totalOutstanding += s.outstanding;
+    amountCollected += s.amountCollected;
+    totalSales += s.totalBusiness;
+    totalSalesPreGst += s.totalBusinessPreGst;
+    totalProfit += s.totalProfit;
+    totalInvoices += s.invoiceCount;
+    pending += s.pendingInvoices;
+    paid += s.paidInvoices;
   }
 
   return {
-    totalOutstanding,
-    amountCollected,
-    totalSales,
+    totalOutstanding: Math.round(totalOutstanding * 100) / 100,
+    amountCollected: Math.round(amountCollected * 100) / 100,
+    totalSales: Math.round(totalSales * 100) / 100,
     totalSalesPreGst: Math.round(totalSalesPreGst * 100) / 100,
     totalProfit: Math.round(totalProfit * 100) / 100,
     totalInvoices,
@@ -197,7 +200,7 @@ export function computeCustomerDetail(c: CustomerDoc): CustomerDetail {
   for (const inv of Object.values(c.invoices ?? {})) {
     if (!isAfterCutoff(inv.invoiceDate)) continue;
     totalBusiness += inv.invoiceAmount || 0;
-    const pre = preGstAmount(inv.invoiceAmount || 0);
+    const pre = preGstAmount(inv.invoiceAmount || 0, inv.gstRate);
     totalBusinessPreGst += pre;
     const pay = payments[inv.invoiceNumber];
     totalOutstanding += invoiceOutstanding(inv, pay);
@@ -219,7 +222,8 @@ export function computeCustomerDetail(c: CustomerDoc): CustomerDetail {
   };
 }
 
-export function preGstAmount(invoiceAmount: number, gstRate = 18): number {
+export function preGstAmount(invoiceAmount: number, gstRate: number | undefined): number {
   if (!invoiceAmount) return 0;
-  return Math.round((invoiceAmount / (1 + gstRate / 100)) * 100) / 100;
+  const rate = typeof gstRate === "number" ? gstRate : 0;
+  return Math.round((invoiceAmount / (1 + rate / 100)) * 100) / 100;
 }
