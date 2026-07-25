@@ -200,7 +200,7 @@ export function computeCustomerDetail(c: CustomerDoc): CustomerDetail {
   for (const inv of Object.values(c.invoices ?? {})) {
     if (!isAfterCutoff(inv.invoiceDate)) continue;
     totalBusiness += inv.invoiceAmount || 0;
-    const pre = preGstAmount(inv.invoiceAmount || 0);
+    const pre = preGstAmount(inv.invoiceAmount || 0, inv.gstRate);
     totalBusinessPreGst += pre;
     const pay = payments[inv.invoiceNumber];
     totalOutstanding += invoiceOutstanding(inv, pay);
