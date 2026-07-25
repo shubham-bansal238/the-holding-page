@@ -41,6 +41,7 @@ export function toCustomerInvoiceRef(inv: RawInvoice): CustomerInvoiceRef {
     invoiceAmount: computeInvoiceAmount(inv),
     invoiceDate,
     month: extractMonth(invoiceDate),
+    gstRate: typeof inv.gstRate === "number" ? inv.gstRate : undefined,
   };
 }
 
