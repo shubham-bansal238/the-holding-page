@@ -222,7 +222,8 @@ export function computeCustomerDetail(c: CustomerDoc): CustomerDetail {
   };
 }
 
-export function preGstAmount(invoiceAmount: number, gstRate = 18): number {
+export function preGstAmount(invoiceAmount: number, gstRate: number | undefined): number {
   if (!invoiceAmount) return 0;
-  return Math.round((invoiceAmount / (1 + gstRate / 100)) * 100) / 100;
+  const rate = typeof gstRate === "number" ? gstRate : 0;
+  return Math.round((invoiceAmount / (1 + rate / 100)) * 100) / 100;
 }
