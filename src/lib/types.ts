@@ -40,6 +40,7 @@ export interface CustomerInvoiceRef {
   invoiceAmount: number;
   invoiceDate: string;
   month: string; // YYYY-MM
+  gstRate?: number;
 }
 
 export interface CustomerPaymentRef {
