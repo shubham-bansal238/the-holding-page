@@ -38,17 +38,19 @@ function InvoiceTypeCompanyPicker() {
     return COMPANIES.filter((c) => allowed.has(c.id));
   }, [session]);
 
-  // If only one company is allowed, skip this step entirely.
+  // Only one company allowed: forward straight to it. `replace` keeps this
+  // step out of history so Back from the company page lands on /invoice, and
+  // the company page's Back link points at /invoice for the same reason.
   useEffect(() => {
     if (!session || !isInvoiceType(type)) return;
-    if (options.length === 1) {
-      navigate({
-        to: "/invoice/$type/$company",
-        params: { type, company: options[0].id },
-        replace: true,
-      });
-    }
+    if (options.length !== 1) return;
+    navigate({
+      to: "/invoice/$type/$company",
+      params: { type, company: options[0].id },
+      replace: true,
+    });
   }, [session, options, type, navigate]);
+
 
   if (!session) return null;
   if (!isInvoiceType(type)) {

@@ -101,9 +101,29 @@ const numberToWords = (input: number | string): string => {
 };
 
 
+// --- Text-rate support -------------------------------------------------
+// A product rate may be a number (normal behaviour) or free text such as
+// "Channel Partner Rate". Text rates are echoed into the Amount column.
+const numAmount = (v: unknown): number =>
+  typeof v === "number" ? v : Number(v) || 0;
+const isTextValue = (v: unknown): boolean =>
+  typeof v === "string" && v.trim() !== "" && isNaN(Number(v));
+const textAmountsOf = (data: InvoiceData): string[] =>
+  data.products.map((p) => p.amount).filter(isTextValue) as string[];
+const withText = (num: number, texts: string[]): string => {
+  if (texts.length === 0) return num.toFixed(2);
+  const joined = texts.join(" + ");
+  return num > 0 ? `${num.toFixed(2)} + ${joined}` : joined;
+};
+const gstWithText = (num: number, texts: string[], rate: number): string => {
+  if (texts.length === 0) return num.toFixed(2);
+  const joined = `${rate}% GST on ${texts.join(" + ")}`;
+  return num > 0 ? `${num.toFixed(2)} + ${joined}` : joined;
+};
+
 const calculateTotals = (data: InvoiceData) => {
   const subtotal = data.products.reduce(
-    (sum, product) => sum + product.amount,
+    (sum, product) => sum + numAmount(product.amount),
     0
   );
   const totalWithExtras = subtotal + data.freight + data.insurance + data.tcs;
@@ -124,6 +144,7 @@ const calculateTotals = (data: InvoiceData) => {
   const grandTotal = totalWithExtras + totalTax;
 
   return {
+    textAmounts: textAmountsOf(data),
     subtotal,
     totalWithExtras,
     cgstAmount,
@@ -147,13 +168,13 @@ const groupProductsByHSN = (data: InvoiceData) => {
       hsnGroups[hsn] = { products: [], totalAmount: 0 };
     }
     hsnGroups[hsn].products.push(product);
-    hsnGroups[hsn].totalAmount += product.amount;
+    hsnGroups[hsn].totalAmount += numAmount(product.amount);
   });
 
   // Convert to array and add freight/insurance proportionally
   const hsnEntries = Object.entries(hsnGroups);
   const totalProductAmount = data.products.reduce(
-    (sum, product) => sum + product.amount,
+    (sum, product) => sum + numAmount(product.amount),
     0
   );
   const gstRate = data.gstRate ?? 18;// Default to 18% if not specified
@@ -629,9 +650,9 @@ const taxInWords = numberToWords(totals.totalTax);
             <td class="center no-wrap">${product.hsn}</td>
             <td class="center">${totals.gstRate.toFixed(2)}%</td>
             <td class="center">${product.unit}</td>
-            <td class="rate">${product.rate.toFixed(2)}</td>
+            <td class="rate">${typeof product.rate === "number" ? product.rate.toFixed(2) : product.rate}</td>
             <td class="center">${product.qty}</td>
-            <td class="amount">${product.amount.toFixed(2)}</td>
+            <td class="amount">${typeof product.amount === "number" ? product.amount.toFixed(2) : product.amount}</td>
           </tr>
           `
               );
@@ -657,7 +678,7 @@ const taxInWords = numberToWords(totals.totalTax);
           <tr class="summary-row total-row">
             <td colspan="8" style="text-align: right; font-weight: bold;">Total</td>
             <td style="text-align: right; font-weight: bold;">
-              ${totals.subtotal.toFixed(2)}
+              ${withText(totals.subtotal, totals.textAmounts)}
             </td>
           </tr>
           ${
@@ -683,11 +704,11 @@ const taxInWords = numberToWords(totals.totalTax);
               ? `
           <tr class="summary-row">
             <td colspan="8" style="text-align: right;">Total Taxable Value</td>
-            <td class="amount">${(totals.subtotal+data.freight).toFixed(2)}</td>
+            <td class="amount">${withText(totals.subtotal + data.freight, totals.textAmounts)}</td>
           </tr>`
               : `<tr class="summary-row">
             <td colspan="8" style="text-align: right;">Total Taxable Value</td>
-            <td class="amount">${totals.subtotal.toFixed(2)}</td>
+            <td class="amount">${withText(totals.subtotal, totals.textAmounts)}</td>
           </tr>`
           }
 
@@ -696,17 +717,17 @@ const taxInWords = numberToWords(totals.totalTax);
               ? `
           <tr class="summary-row">
             <td colspan="8" style="text-align: right;">GST</td>
-            <td class="amount">${(((totals.subtotal + data.freight) * totals.gstRate) / 100).toFixed(2)}</td>
+            <td class="amount">${gstWithText(((totals.subtotal + data.freight) * totals.gstRate) / 100, totals.textAmounts, totals.gstRate)}</td>
           </tr>`
               : `<tr class="summary-row">
             <td colspan="8" style="text-align: right;">GST</td>
-            <td class="amount">${((totals.subtotal * totals.gstRate) / 100).toFixed(2)}</td>
+            <td class="amount">${gstWithText((totals.subtotal * totals.gstRate) / 100, totals.textAmounts, totals.gstRate)}</td>
           </tr>`
           }
           
           <tr class="summary-row">
             <td colspan="8" style="text-align: right;">Total Invoice Amount</td>
-            <td class="amount">${totals.grandTotal.toFixed(2)}</td>
+            <td class="amount">${withText(totals.grandTotal, totals.textAmounts)}</td>
           </tr>
 
           </tbody>

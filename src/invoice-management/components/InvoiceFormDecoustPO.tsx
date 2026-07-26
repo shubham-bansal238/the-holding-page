@@ -135,11 +135,28 @@ IFS Code PUNB0123610`,
       const product = updatedProducts[index];
       if (!product) return prev;
 
-      if (field === "rate" || field === "qty") {
-        const numericValue = Number(value);
-        const rate = field === "rate" ? numericValue : Number(product.rate);
-        const qty = field === "qty" ? numericValue : Number(product.qty);
-        updatedProducts[index] = { ...product, [field]: numericValue, amount: rate * qty };
+      if (field === "rate") {
+        const raw = typeof value === "number" ? String(value) : value;
+        const isText = raw.trim() !== "" && isNaN(Number(raw));
+        if (isText) {
+          updatedProducts[index] = { ...product, rate: raw, amount: raw };
+        } else {
+          const rate = Number(raw) || 0;
+          const qty = Number(product.qty) || 0;
+          updatedProducts[index] = { ...product, rate, amount: rate * qty };
+        }
+      } else if (field === "qty") {
+        const qty = Number(value) || 0;
+        const rateVal = product.rate;
+        const rateIsText =
+          typeof rateVal === "string" &&
+          rateVal.trim() !== "" &&
+          isNaN(Number(rateVal));
+        updatedProducts[index] = {
+          ...product,
+          qty,
+          amount: rateIsText ? (rateVal as string) : (Number(rateVal) || 0) * qty,
+        };
       } else {
         updatedProducts[index] = { ...product, [field]: value };
       }
@@ -593,16 +610,9 @@ IFS Code PUNB0123610`,
                       Rate
                     </label>
                     <Input
-                      type="number"
-                      step="0.01"
-                      value={product.rate}
-                      onChange={(e) =>
-                        updateProduct(
-                          index,
-                          "rate",
-                          parseFloat(e.target.value) || 0
-                        )
-                      }
+                      type="text"
+                      value={String(product.rate)}
+                      onChange={(e) => updateProduct(index, "rate", e.target.value)}
                     />
                   </div>
                   <div>
@@ -628,7 +638,7 @@ IFS Code PUNB0123610`,
                         Amount
                       </label>
                       <Input
-                        value={product.amount.toFixed(2)}
+                        value={typeof product.amount === "number" ? product.amount.toFixed(2) : product.amount}
                         disabled
                         className="bg-gray-100"
                       />

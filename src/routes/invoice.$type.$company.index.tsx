@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { ArrowLeft, PlusCircle, List, FileText } from "lucide-react";
-import { getCompany, type CompanyId } from "@/lib/firebase";
+import { allowedCompaniesFor, getCompany, readSession, type CompanyId } from "@/lib/firebase";
 import { INVOICE_TYPE_LABELS, type InvoiceType } from "@/invoice-management/loaders";
 
 export const Route = createFileRoute("/invoice/$type/$company/")({
@@ -11,18 +11,31 @@ function InvoiceCompanyHome() {
   const { type, company } = useParams({ from: "/invoice/$type/$company/" });
   const companyName = getCompany(company as CompanyId)?.name ?? company;
   const typeLabel = INVOICE_TYPE_LABELS[type as InvoiceType];
+  // With a single allowed company the company picker auto-forwards here, so
+  // Back must skip it and return to the invoice module home.
+  const session = readSession();
+  const singleCompany = !!session && allowedCompaniesFor(session.code).length === 1;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
-          <Link
-            to="/invoice/$type"
-            params={{ type: type as InvoiceType }}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900"
-          >
-            <ArrowLeft className="h-4 w-4" /> Back
-          </Link>
+          {singleCompany ? (
+            <Link
+              to="/invoice"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900"
+            >
+              <ArrowLeft className="h-4 w-4" /> Back
+            </Link>
+          ) : (
+            <Link
+              to="/invoice/$type"
+              params={{ type: type as InvoiceType }}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900"
+            >
+              <ArrowLeft className="h-4 w-4" /> Back
+            </Link>
+          )}
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">
               {typeLabel}
