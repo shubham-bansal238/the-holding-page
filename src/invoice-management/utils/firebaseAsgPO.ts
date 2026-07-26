@@ -67,9 +67,9 @@ export interface InvoiceData {
     description: string;
     hsn: string;
     unit: string;
-    rate: number;
+    rate: number | string;
     qty: number;
-    amount: number;
+    amount: number | string;
   }>;
   freight: number;
   insurance: number;

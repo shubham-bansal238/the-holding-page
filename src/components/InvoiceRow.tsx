@@ -7,6 +7,7 @@ import type {
 } from "@/lib/types";
 import { formatCurrency, formatDate } from "@/lib/invoice-utils";
 import { invoiceOutstanding, preGstAmount, sumEntries } from "@/lib/derive";
+import { evaluateExpression } from "@/lib/calc";
 import { InvoiceStatusBadge } from "./InvoiceStatusBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -84,6 +85,37 @@ export function InvoiceRow({
   useEffect(() => {
     setDraft(normalizePayment(invoice.invoiceNumber, payment));
   }, [payment, invoice.invoiceNumber]);
+
+  // RM Cost behaves like a mini calculator: free text while typing, evaluated
+  // to a number on blur. Only the evaluated number is ever stored.
+  const [rmInput, setRmInput] = useState<string>(() =>
+    payment?.rmCost === null || payment?.rmCost === undefined ? "" : String(payment.rmCost),
+  );
+  const [rmError, setRmError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setRmInput(
+      payment?.rmCost === null || payment?.rmCost === undefined ? "" : String(payment.rmCost),
+    );
+    setRmError(null);
+  }, [payment?.rmCost, invoice.invoiceNumber]);
+
+  function commitRmCost() {
+    const raw = rmInput.trim();
+    if (raw === "") {
+      setRmError(null);
+      setDraft((d) => ({ ...d, rmCost: null }));
+      return;
+    }
+    const value = evaluateExpression(raw);
+    if (value === null) {
+      setRmError("Invalid expression — use numbers with + - * / and ( )");
+      return;
+    }
+    setRmError(null);
+    setRmInput(String(value));
+    setDraft((d) => ({ ...d, rmCost: value }));
+  }
 
   const preGst = useMemo(() => preGstAmount(invoice.invoiceAmount, invoice.gstRate), [invoice.invoiceAmount, invoice.gstRate]);
   const profit = useMemo(() => {
@@ -251,17 +283,26 @@ export function InvoiceRow({
             <div>
               <Label className="text-xs text-slate-600">RM Cost</Label>
               <Input
-                type="number"
+                type="text"
+                inputMode="text"
                 className="mt-1"
-                placeholder="0"
-                value={draft.rmCost ?? ""}
-                onChange={(e) =>
-                  setDraft((d) => ({
-                    ...d,
-                    rmCost: e.target.value === "" ? null : Number(e.target.value),
-                  }))
-                }
+                placeholder="e.g. 4500+892"
+                value={rmInput}
+                onChange={(e) => {
+                  setRmInput(e.target.value);
+                  if (rmError) setRmError(null);
+                }}
+                onBlur={commitRmCost}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitRmCost();
+                  }
+                }}
               />
+              {rmError && (
+                <p className="mt-1 text-[11px] font-medium text-rose-600">{rmError}</p>
+              )}
             </div>
             <Metric
               label="Profit"

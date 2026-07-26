@@ -34,6 +34,12 @@ export function Sidebar({
     window.location.replace("/login");
   }
 
+  function handleChangeModule() {
+    if (!session) return;
+    writeSession({ code: session.code, company: null, module: null });
+    window.location.replace("/select-module");
+  }
+
   function handleSwitch() {
     if (!session) return;
     writeSession({ code: session.code, company: null, module: "outstanding" });
@@ -134,6 +140,13 @@ export function Sidebar({
                   Switch
                 </button>
               )}
+              <button
+                onClick={handleChangeModule}
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+              >
+                <ArrowLeftRight className="h-3.5 w-3.5" />
+                Change Module
+              </button>
               <button
                 onClick={handleLogout}
                 className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
